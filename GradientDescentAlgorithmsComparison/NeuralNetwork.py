@@ -7,9 +7,13 @@ from GradientDescentAlgorithmsComparison.HyperParameters import HyperParameters
 
 
 class NeuralNetwork:
-    hp = HyperParameters()
 
-    # Define the model function (following TF Estimator Template)
+    hp = HyperParameters()
+    model = None
+
+    def __init__(self):
+        self.model = tf.estimator.Estimator(self.model_fn)
+
     def model_fn(self, features, labels, mode):
         # Build the neural network
 
@@ -51,23 +55,22 @@ class NeuralNetwork:
 
         return estim_specs
 
-    def evaluate(self, x, y):
-        # Build the Estimator
-        model = tf.estimator.Estimator(self.model_fn)
-
+    def train(self, x, y):
         # Define the input function for training
         input_fn = tf.estimator.inputs.numpy_input_fn(
             x={'images': x}, y=y,
             batch_size=self.hp.batch_size, num_epochs=None, shuffle=True)
-        # Train the Model
-        model.train(input_fn, steps=self.hp.num_steps)
 
-        # Evaluate the Model
+        # Train the Model
+        self.model.train(input_fn, steps=self.hp.num_steps)
+
+    def evaluate(self, x, y):
         # Define the input function for evaluating
         input_fn = tf.estimator.inputs.numpy_input_fn(
             x={'images': x}, y=y,
             batch_size=self.hp.batch_size, shuffle=False)
+
         # Use the Estimator 'evaluate' method
-        e = model.evaluate(input_fn)
+        e = self.model.evaluate(input_fn)
 
         return e
