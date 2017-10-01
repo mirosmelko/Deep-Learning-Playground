@@ -1,5 +1,5 @@
 """
-Trains neural network using tensorflow
+Wrapper for neural network using tensorflow
 """
 
 import tensorflow as tf
@@ -59,14 +59,17 @@ class NeuralNetwork:
     """
     Trains neural network
     """
-    def train(self, x, y):
+    def train(self, x, y, steps: int = 0):
         # Define the input function for training
         input_fn = tf.estimator.inputs.numpy_input_fn(
             x={'images': x}, y=y,
             batch_size=self.hp.batch_size, num_epochs=None, shuffle=True)
 
+        if steps == 0:
+            steps = self.hp.num_steps
+
         # Train the Model
-        self.model.train(input_fn, steps=self.hp.num_steps)
+        self.model.train(input_fn, steps=steps)
 
     """
     Evaluates the trained model against training set
