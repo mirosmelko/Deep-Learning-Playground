@@ -11,8 +11,8 @@ class NeuralNetwork:
     model = None
     optimizer = None
 
-    def __init__(self, optimizer, hyper_parameters):
-        self.model = tf.estimator.Estimator(self.model_fn)
+    def __init__(self, optimizer, hyper_parameters, log_dir: str = None):
+        self.model = tf.estimator.Estimator(self.model_fn, log_dir)
         self.optimizer = optimizer
         self.hp = hyper_parameters
 
@@ -38,6 +38,8 @@ class NeuralNetwork:
         # Define loss and optimizer
         loss_op = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(
             logits=logits, labels=tf.cast(labels, dtype=tf.int32)))
+
+        tf.summary.scalar('loss_function', loss_op)
 
         # Create train operation using given optimizer
         train_op = self.optimizer.minimize(loss_op, global_step=tf.train.get_global_step())
