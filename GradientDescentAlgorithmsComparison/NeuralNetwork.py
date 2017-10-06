@@ -15,6 +15,7 @@ class NeuralNetwork:
         self.model = tf.estimator.Estimator(self.model_fn, log_dir)
         self.optimizer = optimizer
         self.hp = hyper_parameters
+        tf.reset_default_graph()
 
     """
     Builds neural network
@@ -24,20 +25,20 @@ class NeuralNetwork:
         x = features['images']
 
         # Hidden fully connected layer
-        layer_1 = tf.layers.dense(x, self.hp.n_hidden_1)
+        layer_1 = tf.layers.dense(x, self.hp.n_hidden_1, name="layer1")
 
         # Hidden fully connected layer
-        layer_2 = tf.layers.dense(layer_1, self.hp.n_hidden_2)
+        layer_2 = tf.layers.dense(layer_1, self.hp.n_hidden_2, name="layer2")
 
         # Output fully connected layer with a neuron for each class
-        logits = tf.layers.dense(layer_2, self.hp.num_classes)
+        logits = tf.layers.dense(layer_2, self.hp.num_classes, name="logits")
 
         # Predictions
-        y_ = tf.argmax(logits, axis=1)
+        y_ = tf.argmax(logits, axis=1, name="prediction")
 
         # Define loss and optimizer
         loss_op = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(
-            logits=logits, labels=tf.cast(labels, dtype=tf.int32)))
+            logits=logits, labels=tf.cast(labels, dtype=tf.int32)), name="loss_op")
 
         tf.summary.scalar('loss_function', loss_op)
 

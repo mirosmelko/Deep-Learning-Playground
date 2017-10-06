@@ -1,8 +1,7 @@
 class HyperParameters:
     # Parameters
-    learning_rate = 0.1
     num_steps = 10000
-    batch_size = 128
+    batch_size = 64
 
     # Network Parameters
     n_hidden_1 = 256  # 1st layer number of neurons
